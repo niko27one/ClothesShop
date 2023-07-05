@@ -156,7 +156,6 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
         System.out.println("the file is empty");
         System.out.println("Creation of new week file");
         this.saveSells(fname);
-        return obj;
       }
       FileInputStream file = new FileInputStream(fileObj);
       ObjectInputStream in = new ObjectInputStream(file);

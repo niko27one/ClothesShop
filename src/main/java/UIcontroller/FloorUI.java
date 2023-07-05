@@ -23,7 +23,7 @@ public class FloorUI {
 
       if (login != null) {
         System.out.println("Accesso effettuato!");
-        int scelta;
+        int choise;
 
         do {
           System.out.println("Menu:");
@@ -33,14 +33,15 @@ public class FloorUI {
           System.out.print("Seleziona un'opzione: ");
 
           try {
-            scelta = Integer.parseInt(reader.readLine());
+            choise = Integer.parseInt(reader.readLine());
           } catch (IOException e) {
-            scelta = 0;
+            choise = 0;
             e.printStackTrace();
           }
 
-          switch (scelta) {
+          switch (choise) {
             case 1:
+              shop.loadWeeklySells("src/main/resources/Saving.txt");
               // Esegui l'operazione 1
               System.out.println("Eseguita operazione 1.");
             case 2:
@@ -55,7 +56,7 @@ public class FloorUI {
             default:
               System.out.println("Opzione non valida. Riprova.");
           }
-        } while (scelta != 3);
+        } while (choise != 3);
       } else {
         System.out.println("ID o password non validi.");
       }
