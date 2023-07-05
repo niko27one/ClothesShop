@@ -1,0 +1,6 @@
+1001,Shoes,30,0
+1002,Shirts,15,0
+1003,Trousers,20,0
+1004,Socks,10,0
+1005,Tshirt,15,0
+1006,Sleeps,5,0

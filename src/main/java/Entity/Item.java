@@ -2,7 +2,7 @@ package Entity;
 
 import java.io.Serializable;
 
-public class Item implements Serializable {
+public class Item  implements Serializable {
   private int barcode;
   private String name;
   private int price;
@@ -50,6 +50,7 @@ public class Item implements Serializable {
   public void soldItem(){
     quantity--;
   }
+
 
   @Override
   public String toString() {

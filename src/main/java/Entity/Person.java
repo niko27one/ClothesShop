@@ -2,38 +2,38 @@ package Entity;
 
 import java.io.Serializable;
 
-public abstract class Person implements Serializable {
-    private String firstName;
-    private String lastName;
-    private String DOB;
+public abstract class Person<T> implements Serializable {
+    private T firstName;
+    private T lastName;
+    private T DOB;
 
-  public Person(String firstName, String lastName, String DOB) {
+  public Person(T firstName, T lastName, T DOB) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.DOB = DOB;
   }
 
-  public String getFirstName() {
+  public T getFirstName() {
     return firstName;
   }
 
-  public void setFirstName(String firstName) {
+  public void setFirstName(T firstName) {
     this.firstName = firstName;
   }
 
-  public String getLastName() {
+  public T getLastName() {
     return lastName;
   }
 
-  public void setLastName(String lastName) {
+  public void setLastName(T lastName) {
     this.lastName = lastName;
   }
 
-  public String getDOB() {
+  public T getDOB() {
     return DOB;
   }
 
-  public void setDOB(String DOB) {
+  public void setDOB(T DOB) {
     this.DOB = DOB;
   }
 
