@@ -1,7 +1,6 @@
 package Controller;
 import Entity.FloorSeller;
 import Entity.Item;
-import Entity.Login;
 import Entity.SoldItem;
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,10 +22,10 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
   private List<SoldItem> soldItems;
 
   public FloorFloorController(){
-    this.floorSellers = addToList(FileType.FLOOR_SELLER,FloorSeller.class);
     this.items= addToList(FileType.ITEMS,Item.class);
-    this.soldItems = addToList(FileType.SOLD_ITEMS,SoldItem.class);
+    this.floorSellers = addToList(FileType.FLOOR_SELLER,FloorSeller.class);
   }
+
 
   public ArrayList<FloorSeller> addFloorSellers(){
     String filePath = "src/main/resources/FloorSellers.txt";
@@ -53,10 +52,8 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
   }
 
   public <T> List<T> addToList(FileType fileType,Class<T> tClass) {
-      List<T> floorSellers = new ArrayList<>();
-      List<T> items = new ArrayList<>();
-      List<T> loginDetails = new ArrayList<>();
-      List<T>soldItems = new ArrayList<>();
+      List<T> db = new ArrayList<>();
+
     try (FileReader fileReader = new FileReader(fileType.getType());
         BufferedReader bufferedReader = new BufferedReader(fileReader)) {
 
@@ -66,18 +63,19 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
 
         if (fileType == FileType.ITEMS) {
           Item item = createItems(data);
-          items.add((T) item);
-          return  items;
+          db.add((T) item);
+          //return  items;
         } else if (fileType == FileType.FLOOR_SELLER) {
           FloorSeller floorSeller =  createFloorSellers(data);
-          floorSellers.add((T) floorSeller);
-          return  floorSellers;
-        } else if (fileType == FileType.SOLD_ITEMS) {
+          db.add((T) floorSeller);
+          //return  floorSellers;
+        } /*else if (fileType == FileType.SOLD_ITEMS) {
           SoldItem soldItem = createSoldItems(data);
-          soldItems.add((T)soldItem);
-            return  soldItems;
-        }
+          db.add((T)soldItem);
+            //return  soldItems;
+        }*/
       }
+      return db;
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -104,12 +102,6 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
     return new SoldItem(barcode, name, price,quantity);
   }
 
-  public Login createLoginDetails(String[] data){
-    int id = Integer.parseInt(data[0]); // Modify the index based on your data structure
-    String password = data[1];
-    return new Login(id, password); // Modify the constructor parameters accordingly
-  }
-
   public Item createItems(String[] data) {
     // Create and return an object based on the data
     int barcode = Integer.parseInt(data[0]); // Modify the index based on your data structure
@@ -118,15 +110,6 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
     int quantity = Integer.parseInt(data[3]);
 
     return new Item(barcode, name, price,quantity); // Modify the constructor parameters accordingly
-  }
-
-  public boolean loginVerification (List <Login> logins,int id,String passw){
-     for(Login login: logins){
-       if(login.getId() == id && login.getPassword().equals(passw)){
-         return true;
-       }
-     }
-     return false;   // return id == login.getId() && passw.equals(login.getPassword());
   }
 
   public void saveSells(String fname){   // uses object serialisation
@@ -174,61 +157,55 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
   }
 
   public void addSales(int id, int qty,String name) {
+    boolean isFound = false;
     for(FloorSeller floorSeller: floorSellers){
       if (id == floorSeller.getFloorSellerNo()) {
-        floorSeller.setTotalItemsSold(qty);
-        this.removeItemsQty(name);
+        for(Item item:this.items){
+          if(item.getName().equals(name)){
+            SoldItem soldItem = new SoldItem(item.getBarcode(),item.getName(),item.getPrice(),qty);
+            floorSeller.setSoldItem(soldItem);
+            floorSeller.setTotalItemsSold(qty);
+          }
+        }
+        this.removeItemsQty(name,qty);
         System.out.println(name+" sold");
-      } else {
-        System.out.println("seller not found");
+        isFound = true;
       }
+    }if (!isFound) {
+      System.out.println("seller not found");
     }
   }
 
-  public void removeItemsQty(String name){
+  public void removeItemsQty(String name, int soldQty){
+    boolean isItemFound = false;
     for(Item item:items){
       if (item.getName().equals(name)) {
-        item.soldItem();
-        this.addSoldItemsQty(name);
-      } else {
-        System.out.println("item not found");
+        item.soldItem(soldQty);
+        //this.addSoldItemsQty(name,soldQty);
+        isItemFound = true;
       }
+    }if (!isItemFound) {
+      System.out.println("item not found");
     }
   }
 
-  public void addSoldItemsQty(String name) {
+  public void addSoldItemsQty(String name,int soldQty) {
     for(SoldItem soldItem:soldItems){
       if(soldItem.getName().equals(name)){
-        soldItem.soldItem();
+        soldItem.soldItem(soldQty);
       }
     }
   }
 
   public void printDailySingleSell(int id) {//to add total price of the items sold anche change in the the interface
-    double itemsValue = 0.0;
     for(FloorSeller floorSeller: floorSellers){
       if (id == floorSeller.getFloorSellerNo()) {// to check comparison
-        for(SoldItem item:soldItems){
-          itemsValue += floorSeller.getTotalItemsSold() * Integer.parseInt(item.getPrice().toString());
+          for (SoldItem soldItem: floorSeller.getSoldItemList()){
+            System.out.println(soldItem.toString());
+          }
         }
-        System.out.println("total items sold from " + floorSeller.getFirstName() + " " + floorSeller.getLastName() + " :" + floorSeller.getTotalItemsSold()+ " total value of: "+ itemsValue);
-      } else {
-        System.out.println("floor seller not found");
       }
     }
-  }
-
-  public void printDailyTeamSells() {
-    int totalItemsSold = 0;
-    double itemsValue = 0.0;
-    for(FloorSeller floorSeller: floorSellers){
-        totalItemsSold+= floorSeller.getTotalItemsSold();// totalItemSold = totalItemSold + floorSeller.getTotalItemsSold();
-    }
-    for(SoldItem item:soldItems){
-      itemsValue += totalItemsSold * Integer.parseInt(item.getPrice().toString());
-    }
-    System.out.println("total team items sold: " +totalItemsSold + ", for the total price sold of: " +itemsValue);
-  }
 
   public void printItemsAndQty() {
     for(Item item: items){
@@ -236,21 +213,13 @@ public class FloorFloorController implements FloorControllerInterface, Serializa
     }
   }
 
-  public void printItemsSold() {
-    System.out.println("all the items sold are: ");
-    for(SoldItem soldItem:soldItems){
-      System.out.println(soldItem.getBarcode() + ", "+ soldItem.getName() + ", quantity:"+ soldItem.getQuantity()+ " "+ soldItem.getPrice());
-    }
-  }
-
   public void printFloorSellerDetails(int id) {
     for(FloorSeller floorSeller:floorSellers){
       if (id == floorSeller.getFloorSellerNo()) {
-        System.out.println(floorSeller.getFirstName()+ " "+ floorSeller.getLastName());
+        System.out.println("Hello "+ floorSeller.getFloorSellerNo() + " "+ " "+ floorSeller.getFirstName()+ " " +floorSeller.getLastName());
       }
     }
   }
+
+
 }
-
-
-

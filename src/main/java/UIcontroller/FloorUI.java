@@ -13,54 +13,83 @@ public class FloorUI {
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
       LoginController loginController = new LoginController();
       FloorControllerInterface shop = new FloorFloorController();
-      System.out.println("Insert id number: ");
-      int id = Integer.parseInt(reader.readLine());
-      System.out.println("Insert password");
-      String password= reader.readLine();
+      boolean runShop = true;
 
+      while(runShop){
+        System.out.println("Enter id number: ");
+        int id = Integer.parseInt(reader.readLine());
+        System.out.println("Enter password");
+        String password= reader.readLine();
+        Login login = LoginController.createLogin(id, password);
+        if (login != null) {
+          System.out.println("Logged in!");
+          shop.printFloorSellerDetails(id);
+          int choise;
+          String name;
+          int qty;
+          do {
+            System.out.println("Menu:");
+            System.out.println("1. load the week");
+            System.out.println("2. add sale");
+            System.out.println("3. save sales");
+            System.out.println("4. print your details");
+            System.out.println("5. print your items sold and total value");
+            System.out.println("6. list team sales");
+            System.out.println("7. list items and quantity left");
+            System.out.println("8. print items sold and value");
+            System.out.println("9. Exit");
+            try {
+              choise = Integer.parseInt(reader.readLine());
+            } catch (IOException e) {
+              choise = 0;
+              e.printStackTrace();
+            }
 
-      Login login = LoginController.createLogin(id, password);
-
-      if (login != null) {
-        System.out.println("Accesso effettuato!");
-        int choise;
-
-        do {
-          System.out.println("Menu:");
-          System.out.println("1. Operazione 1");
-          System.out.println("2. Operazione 2");
-          System.out.println("3. Esci");
-          System.out.print("Seleziona un'opzione: ");
-
-          try {
-            choise = Integer.parseInt(reader.readLine());
-          } catch (IOException e) {
-            choise = 0;
-            e.printStackTrace();
-          }
-
-          switch (choise) {
-            case 1:
-              shop.loadWeeklySells("src/main/resources/Saving.txt");
-              // Esegui l'operazione 1
-              System.out.println("Eseguita operazione 1.");
-            case 2:
-              // Esegui l'operazione 2
-              System.out.println("Eseguita operazione 2.");
-
-            case 3:
-              // Esci dal menu
-              System.out.println("Uscendo dal programma.");
-              reader.close();
-              break;
-            default:
-              System.out.println("Opzione non valida. Riprova.");
-          }
-        } while (choise != 3);
-      } else {
-        System.out.println("ID o password non validi.");
+            switch (choise) {
+              case 1:
+                shop.loadWeeklySells("src/main/resources/Saving.txt");
+                System.out.println("week loaded.");
+                break;
+              case 2:
+                System.out.println("name of the item: ");
+                name = reader.readLine();
+                System.out.println("ho many?: ");
+                qty = Integer.parseInt(reader.readLine());
+                shop.addSales(id,qty,name);
+                System.out.println("sales added.");
+                break;
+              case 3:
+                shop.saveSells("src/main/resources/Saving.txt");
+                System.out.println("sales saved");
+                break;
+              case 4:
+                shop.printFloorSellerDetails(id);
+                break;
+              case 5:
+                shop.printDailySingleSell(id);
+                break;
+              case 6:
+                shop.printItemsAndQty();
+                break;
+              case 7:
+                // Esci dal menu
+                System.out.println("bye bye.");
+                reader.close();
+                runShop = false;
+                break;
+              default:
+                System.out.println("not a valid choise, try again.");
+            }
+          } while (choise != 7);
+        } else {
+          System.out.println("ID or password not correct.");
+        }
       }
-    }
+
+      }
+
+
+
 }
 
 

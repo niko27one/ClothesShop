@@ -47,8 +47,11 @@ public class Item  implements Serializable {
     this.quantity = quantity;
   }
 
-  public void soldItem(){
-    quantity--;
+  public void soldItem(int soldQty){
+    if(this.quantity==0){
+      System.out.println("no more in stock");
+    }else
+      this.quantity -= soldQty;
   }
 
 

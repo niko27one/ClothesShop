@@ -1,5 +1,4 @@
 package Entity;
-
 import java.io.Serializable;
 
 public class SoldItem <T> implements Serializable {
@@ -7,7 +6,7 @@ public class SoldItem <T> implements Serializable {
   private T name;
   private T price;
   private int quantity;
-
+  private int totalammount;
   public SoldItem(T barcode, T name,T price,int quantity){
     this.barcode=barcode;
     this.name=name;
@@ -46,8 +45,17 @@ public class SoldItem <T> implements Serializable {
     this.quantity = quantity;
   }
 
-  public void soldItem(){
-    this.quantity++;
+  public void soldItem(int itemsQty){
+    this.quantity += itemsQty;
   }
 
+  @Override
+  public String toString() {
+    return "SoldItem{" +
+        "barcode=" + barcode +
+        ", name=" + name +
+        ", price=" + price +
+        ", quantity=" + quantity +
+        '}';
+  }
 }

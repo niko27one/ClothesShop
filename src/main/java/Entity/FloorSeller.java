@@ -1,14 +1,13 @@
 package Entity;
-
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FloorSeller extends Person implements Serializable {
-
-
-
   private int floorSellerNo;
-
+  private List<SoldItem> soldItemList = new ArrayList<>();
   private int totalItemsSold = 0;
+  private int totalAmountSold = 0;
 
   public FloorSeller(String firstName, String lastName, String DOB,int floorSellerNo) {
     super(firstName, lastName, DOB);
@@ -22,27 +21,37 @@ public class FloorSeller extends Person implements Serializable {
     this.floorSellerNo = floorSellerNo;
   }
 
+  public List<SoldItem> getSoldItemList() {
+    return soldItemList;
+  }
+
+  public void setSoldItem(SoldItem soldItem) {
+    this.getSoldItemList().add(soldItem);
+  }
+
   public int getTotalItemsSold() {
+
     return totalItemsSold;
   }
 
   public void setTotalItemsSold(int totalItemsSold) {
-    this.totalItemsSold = totalItemsSold;
+    this.totalItemsSold += totalItemsSold;
   }
 
+  public int getTotalAmountSold(){
+    this.totalAmountSold = this.getSoldItemList().stream().mapToInt(soldItem->(int)soldItem.getPrice()*soldItem.getQuantity()).sum();
+    return  this.totalAmountSold;
+  }
 
   @Override
   public String toString() {
-    System.out.println(super.toString());
-    return "Employee{" +
-        "firstName='" + this.getFirstName() + '\'' +
-        ", lastName='" + this.getLastName() + '\'' +
-        ", DOB='" + this.getDOB() + '\'' +
-        "employeeNo=" + floorSellerNo +
+    return "FloorSeller{" +
+        "floorSellerNo=" + floorSellerNo +
+        ", soldItemList=" + soldItemList +
+        ", totalItemsSold=" + totalItemsSold +
+        ", totalAmountSold=" + this.getTotalAmountSold()+
         '}';
   }
-
-
 }
 
 

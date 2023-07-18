@@ -12,18 +12,14 @@ public interface FloorControllerInterface extends Serializable {
   <T> List<T> addToList(FileType fileType,Class<T> tClass);
   FloorSeller createFloorSellers(String[] data);
   Item createItems(String[] data);
-  boolean loginVerification (List <Login> logins,int id,String passw);
   SoldItem createSoldItems(String[] data);
-  Login createLoginDetails(String[] data);
-  void addSoldItemsQty(String name);
+  void addSoldItemsQty(String name, int soldQty);
   void saveSells(String fname);
   Optional<FloorFloorController> loadWeeklySells(String fname);
   void addSales(int id,int qty,String name);
-  void removeItemsQty(String name);
+  void removeItemsQty(String name,int soldQty);
   void printDailySingleSell(int id);
-  void printDailyTeamSells();
   void printItemsAndQty();
-  void printItemsSold();
   void printFloorSellerDetails(int id);
 
 }
